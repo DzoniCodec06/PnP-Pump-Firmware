@@ -10,9 +10,10 @@
 
 Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, RST_PIN);
 
-const int button_down = 3;
+const int button_down = 4;
 const int button_up = 5;
-const int button_select = 4;
+const int button_select = 3; 
+const int pump = 6; //Vakuum pumpa, pokrece se sa HIGH signalom!
 
 int down;
 int up;
@@ -175,6 +176,7 @@ void menuSelect(int sc) {
         suck_menu = false;
         main_menu = true;
         mainMenu(screen);
+        digitalWrite(pump, HIGH);
         break;
       case 2:
         Serial.println("Off");
@@ -182,6 +184,7 @@ void menuSelect(int sc) {
         suck_menu = false;
         main_menu = true;
         mainMenu(screen);
+        digitalWrite(pump, LOW);
         break;
     }
   } else if (blow_menu) {
@@ -271,6 +274,7 @@ void setup() {
   pinMode(button_down, INPUT_PULLUP);
   pinMode(button_up, INPUT_PULLUP);
   pinMode(button_select, INPUT_PULLUP);
+  pinMode(pump, OUTPUT);
   pinMode(13, OUTPUT);
 }
 
@@ -312,6 +316,5 @@ void loop() {
 
   lastState = select;
 }
-
 
 
