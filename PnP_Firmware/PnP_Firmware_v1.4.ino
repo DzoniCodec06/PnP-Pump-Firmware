@@ -12,12 +12,16 @@ Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, RST_PIN);
 
 const int button_down = 4;
 const int button_up = 5;
-const int button_select = 3; 
-const int pump = 6; //Vakuum pumpa, pokrece se sa HIGH signalom!
+const int button_select = 3;
+const int pump = 6; //Vacuum pump, activates when HIGH is applied!
+const int pedal = 7; //Foot pedal, input pullup mode!
 
 int down;
 int up;
 int select;
+int pedalval;
+
+int pumpvalue;
 
 int screen = 1;
 
@@ -111,37 +115,61 @@ void powerMenu(int pwr) {
   oled.setCursor(40, 0);
   oled.print("Power");
   oled.setTextSize(2);
-  oled.setCursor(10, 30);
+  oled.setCursor(1, 30);
   oled.print("-");
-  oled.setCursor(110, 30);
+  oled.setCursor(113, 30);
   oled.print("+");
-
+  
   switch (pwr) {
     case 1:
-      oled.fillRect(30, 30, 15, 15, WHITE);
-      oled.drawRect(50, 30, 15, 15, WHITE);
-      oled.drawRect(70, 30, 15, 15, WHITE);
-      oled.drawRect(90, 30, 15, 15, WHITE);
+      oled.drawRect(15, 30, 15, 15, WHITE);
+      oled.drawRect(35, 30, 15, 15, WHITE);
+      oled.drawRect(55, 30, 15, 15, WHITE);
+      oled.drawRect(75, 30, 15, 15, WHITE);
+      oled.drawRect(95, 30, 15, 15, WHITE);
+      analogWrite(pump, 0);
       break;
     case 2:
-      oled.fillRect(30, 30, 15, 15, WHITE);
-      oled.fillRect(50, 30, 15, 15, WHITE);
-      oled.drawRect(70, 30, 15, 15, WHITE);
-      oled.drawRect(90, 30, 15, 15, WHITE);
+      oled.fillRect(15, 30, 15, 15, WHITE);
+      oled.drawRect(35, 30, 15, 15, WHITE);
+      oled.drawRect(55, 30, 15, 15, WHITE);
+      oled.drawRect(75, 30, 15, 15, WHITE);
+      oled.drawRect(95, 30, 15, 15, WHITE);
+      analogWrite(pump, 80);
       break;
     case 3:
-      oled.fillRect(30, 30, 15, 15, WHITE);
-      oled.fillRect(50, 30, 15, 15, WHITE);
-      oled.fillRect(70, 30, 15, 15, WHITE);
-      oled.drawRect(90, 30, 15, 15, WHITE);
+      oled.fillRect(15, 30, 15, 15, WHITE);
+      oled.fillRect(35, 30, 15, 15, WHITE);
+      oled.drawRect(55, 30, 15, 15, WHITE);
+      oled.drawRect(75, 30, 15, 15, WHITE);
+      oled.drawRect(95, 30, 15, 15, WHITE);
+      analogWrite(pump, 120);
       break;
     case 4:
-      oled.fillRect(30, 30, 15, 15, WHITE);
-      oled.fillRect(50, 30, 15, 15, WHITE);
-      oled.fillRect(70, 30, 15, 15, WHITE);
-      oled.fillRect(90, 30, 15, 15, WHITE);
+      oled.fillRect(15, 30, 15, 15, WHITE);
+      oled.fillRect(35, 30, 15, 15, WHITE);
+      oled.fillRect(55, 30, 15, 15, WHITE);
+      oled.drawRect(75, 30, 15, 15, WHITE);
+      oled.drawRect(95, 30, 15, 15, WHITE); 
+      analogWrite(pump, 165);
       break;
-  } 
+    case 5:
+      oled.fillRect(15, 30, 15, 15, WHITE);
+      oled.fillRect(35, 30, 15, 15, WHITE);
+      oled.fillRect(55, 30, 15, 15, WHITE);
+      oled.fillRect(75, 30, 15, 15, WHITE);
+      oled.drawRect(95, 30, 15, 15, WHITE); 
+      analogWrite(pump, 200);
+      break;
+    case 6:
+      oled.fillRect(15, 30, 15, 15, WHITE);
+      oled.fillRect(35, 30, 15, 15, WHITE);
+      oled.fillRect(55, 30, 15, 15, WHITE);
+      oled.fillRect(75, 30, 15, 15, WHITE);
+      oled.fillRect(95, 30, 15, 15, WHITE);
+      analogWrite(pump, 255);
+      break;
+  }
 
   oled.display();
 }
@@ -274,6 +302,7 @@ void setup() {
   pinMode(button_down, INPUT_PULLUP);
   pinMode(button_up, INPUT_PULLUP);
   pinMode(button_select, INPUT_PULLUP);
+  pinMode(pedal, INPUT_PULLUP);
   pinMode(pump, OUTPUT);
   pinMode(13, OUTPUT);
 }
@@ -282,6 +311,7 @@ void loop() {
   down = digitalRead(button_down);
   up = digitalRead(button_up);
   select = digitalRead(button_select);
+  pedalval = digitalRead(pedal);
 
   if (main_menu) mainMenu(screen);
   else if (suck_menu) suckMenu(screen);
@@ -294,7 +324,7 @@ void loop() {
     delay(BUTTON_PRESS_DELAY);
   } else if (up == LOW) {
     if (screen < 3 && !power_menu) screen++;
-    if (power_level < 4 && power_menu) power_level++;
+    if (power_level < 6 && power_menu) power_level++;
     delay(BUTTON_PRESS_DELAY);
   } /*else if (select == LOW) {
     menuSelect(screen);
@@ -316,5 +346,4 @@ void loop() {
 
   lastState = select;
 }
-
 
