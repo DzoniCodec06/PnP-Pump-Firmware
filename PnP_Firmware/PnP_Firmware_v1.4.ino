@@ -119,7 +119,7 @@ void powerMenu(int pwr) {
   oled.print("-");
   oled.setCursor(113, 30);
   oled.print("+");
-  
+
   switch (pwr) {
     case 1:
       oled.drawRect(15, 30, 15, 15, WHITE);
@@ -135,7 +135,13 @@ void powerMenu(int pwr) {
       oled.drawRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
-      analogWrite(pump, 80);
+      if (digitalRead(pedal) == LOW) {
+        analogWrite(pump, 80);
+        return;
+      }
+      else {
+        analogWrite(pump, 0);
+      }
       break;
     case 3:
       oled.fillRect(15, 30, 15, 15, WHITE);
@@ -143,23 +149,41 @@ void powerMenu(int pwr) {
       oled.drawRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
-      analogWrite(pump, 120);
+      if (digitalRead(pedal) == LOW) {
+        analogWrite(pump, 135);
+        return;
+      }
+      else {
+        analogWrite(pump, 0);
+      }
       break;
     case 4:
       oled.fillRect(15, 30, 15, 15, WHITE);
       oled.fillRect(35, 30, 15, 15, WHITE);
       oled.fillRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
-      oled.drawRect(95, 30, 15, 15, WHITE); 
-      analogWrite(pump, 165);
+      oled.drawRect(95, 30, 15, 15, WHITE);
+      if (digitalRead(pedal) == LOW) {
+        analogWrite(pump, 175);
+        return;
+      }
+      else {
+        analogWrite(pump, 0);
+      }
       break;
     case 5:
       oled.fillRect(15, 30, 15, 15, WHITE);
       oled.fillRect(35, 30, 15, 15, WHITE);
       oled.fillRect(55, 30, 15, 15, WHITE);
       oled.fillRect(75, 30, 15, 15, WHITE);
-      oled.drawRect(95, 30, 15, 15, WHITE); 
-      analogWrite(pump, 200);
+      oled.drawRect(95, 30, 15, 15, WHITE);
+      if (digitalRead(pedal) == LOW) {
+        analogWrite(pump, 225);
+        return;
+      }
+      else {
+        analogWrite(pump, 0);
+      }
       break;
     case 6:
       oled.fillRect(15, 30, 15, 15, WHITE);
@@ -167,7 +191,13 @@ void powerMenu(int pwr) {
       oled.fillRect(55, 30, 15, 15, WHITE);
       oled.fillRect(75, 30, 15, 15, WHITE);
       oled.fillRect(95, 30, 15, 15, WHITE);
-      analogWrite(pump, 255);
+      if (digitalRead(pedal) == LOW) {
+        analogWrite(pump, 255);
+        return;
+      }
+      else {
+        analogWrite(pump, 0);
+      }
       break;
   }
 
@@ -346,4 +376,3 @@ void loop() {
 
   lastState = select;
 }
-
