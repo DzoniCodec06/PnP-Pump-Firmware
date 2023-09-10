@@ -15,6 +15,7 @@ const int button_up = 5;
 const int button_select = 3;
 const int pump = 6; //Vacuum pump, activates when HIGH is applied!
 const int pedal = 7; //Foot pedal, input pullup mode!
+const int led_pin = 2; //ws2812b 5050 led diodes 
 
 int down;
 int up;
