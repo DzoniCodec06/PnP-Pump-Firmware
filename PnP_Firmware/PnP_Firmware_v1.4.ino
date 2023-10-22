@@ -1,21 +1,26 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
+#include <Adafruit_NeoPixel.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define RST_PIN -1
+#define RST_PIN   -1
+#define PIN        2
+#define NUMPIXELS  3
 
 #define BUTTON_PRESS_DELAY 250
 
 Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, RST_PIN);
+
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 const int button_down = 5;
 const int button_up = 3;
 const int button_select = 4;
 const int pump = 6; //Vacuum pump, activates when HIGH is applied!
 const int pedal = 7; //Foot pedal, input pullup mode!
-const int led_pin = 2; //ws2812b 5050 led diodes 
+const int led_pin = 2; //ws2812b 5050 led diodes
 
 int down;
 int up;
@@ -36,7 +41,7 @@ bool blow = false;
 
 int power_level = 1;
 
-const int SHORT_PRESS_TIME = 500; // 500 milliseconds
+const int SHORT_PRESS_TIME = 200; // 500 milliseconds
 
 int lastState = LOW;  // the previous state from the input pin
 int currentState;     // the current reading from the input pin
@@ -113,14 +118,13 @@ void blowMenu(int sc) {
 void powerMenu(int pwr) {
   oled.clearDisplay();
   oled.setTextSize(2);
-  oled.setCursor(40, 0);
+  oled.setCursor(33, 0);
   oled.print("Power");
   oled.setTextSize(2);
   oled.setCursor(1, 30);
   oled.print("-");
   oled.setCursor(113, 30);
   oled.print("+");
-
   switch (pwr) {
     case 1:
       oled.drawRect(15, 30, 15, 15, WHITE);
@@ -128,6 +132,9 @@ void powerMenu(int pwr) {
       oled.drawRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
+      pixels.setPixelColor(0, pixels.Color(0, 0, 0));
+      pixels.setPixelColor(1, pixels.Color(0, 0, 0));
+      pixels.setPixelColor(2, pixels.Color(0, 0, 0));
       analogWrite(pump, 0);
       break;
     case 2:
@@ -136,6 +143,9 @@ void powerMenu(int pwr) {
       oled.drawRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
+      pixels.setPixelColor(0, pixels.Color(0, 100, 0));
+      pixels.setPixelColor(1, pixels.Color(0, 0, 0));
+      pixels.setPixelColor(2, pixels.Color(0, 0, 0));
       if (digitalRead(pedal) == LOW) {
         analogWrite(pump, 80);
         return;
@@ -150,6 +160,9 @@ void powerMenu(int pwr) {
       oled.drawRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
+      pixels.setPixelColor(0, pixels.Color(0, 100, 0));
+      pixels.setPixelColor(1, pixels.Color(50, 50, 0));
+      pixels.setPixelColor(2, pixels.Color(0, 0, 0));
       if (digitalRead(pedal) == LOW) {
         analogWrite(pump, 135);
         return;
@@ -164,6 +177,9 @@ void powerMenu(int pwr) {
       oled.fillRect(55, 30, 15, 15, WHITE);
       oled.drawRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
+      pixels.setPixelColor(0, pixels.Color(0, 100, 0));
+      pixels.setPixelColor(1, pixels.Color(150, 100, 0));
+      pixels.setPixelColor(2, pixels.Color(0, 0, 0));
       if (digitalRead(pedal) == LOW) {
         analogWrite(pump, 175);
         return;
@@ -178,6 +194,9 @@ void powerMenu(int pwr) {
       oled.fillRect(55, 30, 15, 15, WHITE);
       oled.fillRect(75, 30, 15, 15, WHITE);
       oled.drawRect(95, 30, 15, 15, WHITE);
+      pixels.setPixelColor(0, pixels.Color(0, 100, 0));
+      pixels.setPixelColor(1, pixels.Color(150, 100, 0));
+      pixels.setPixelColor(2, pixels.Color(80, 20, 0));
       if (digitalRead(pedal) == LOW) {
         analogWrite(pump, 225);
         return;
@@ -192,6 +211,9 @@ void powerMenu(int pwr) {
       oled.fillRect(55, 30, 15, 15, WHITE);
       oled.fillRect(75, 30, 15, 15, WHITE);
       oled.fillRect(95, 30, 15, 15, WHITE);
+      pixels.setPixelColor(0, pixels.Color(0, 100, 0));
+      pixels.setPixelColor(1, pixels.Color(150, 100, 0));
+      pixels.setPixelColor(2, pixels.Color(100, 0, 0));
       if (digitalRead(pedal) == LOW) {
         analogWrite(pump, 255);
         return;
@@ -201,8 +223,8 @@ void powerMenu(int pwr) {
       }
       break;
   }
-
   oled.display();
+  pixels.show();
 }
 
 void menuSelect(int sc) {
@@ -330,6 +352,8 @@ void setup() {
   if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) for (;;);
   Serial.begin(9600);
   bootMenu();
+  pixels.begin();
+  pixels.clear();
   pinMode(button_down, INPUT_PULLUP);
   pinMode(button_up, INPUT_PULLUP);
   pinMode(button_select, INPUT_PULLUP);
