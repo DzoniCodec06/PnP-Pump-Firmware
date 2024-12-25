@@ -684,11 +684,9 @@ void setup() {
   pinMode(pump, OUTPUT);
 
   digitalWrite(trns_pin, HIGH);
-  /*
-    oled.clearDisplay();
-    booting_screen();
-    delay(4000);
-  */
+  oled.clearDisplay();
+  booting_screen();
+  delay(4000);
   oled.clearDisplay();
   oled.drawBitmap(0, 0, page_1, 128, 64, WHITE);
   oled.drawBitmap(4, 20, bar, 119, 16, WHITE);
